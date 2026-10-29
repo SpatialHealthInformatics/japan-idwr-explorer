@@ -2,9 +2,11 @@
 # Japan IDWR Surveillance Explorer (Streamlit web app)
 # Author:   Genie Tang (gtang10@jh.edu)
 # Script:   app.py
-# Version:  v1
+# Version:  v2
 #
 # Version log
+#   v2 (2026-10-29): Map labels for Osaka, Wakayama, Kanagawa and Chiba moved off the
+#       borders and onto open sea or their own land (static/prefecture_labels.csv).
 #   v1 (2026-10-29): New app for all 19 IDWR sentinel diseases, built from the
 #       Japan Influenza Surveillance Explorer v12. data/idwr_weekly.csv now holds
 #       2026 weeks 1 to 42 for every disease, read from the week 42 yearly
@@ -105,7 +107,7 @@ import plotly.io as pio
 from plotly.subplots import make_subplots
 import streamlit as st
 
-VERSION = "v1"
+VERSION = "v2"
 ROOT = Path(__file__).parent
 DATA_DIR = ROOT / "data"
 STATIC_DIR = ROOT / "static"
