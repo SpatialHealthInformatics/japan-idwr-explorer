@@ -2,9 +2,11 @@
 # Japan IDWR Surveillance Explorer (Streamlit web app)
 # Author:   Genie Tang (gtang10@jh.edu)
 # Script:   app.py
-# Version:  v3
+# Version:  v4
 #
 # Version log
+#   v4 (2026-10-30): Summary Table for diseases without the influenza 1.0 level (for example COVID-19)
+#       now shows the prefectures selected in the sidebar, with the same Selected / All 47 choice.
 #   v3 (2026-10-29): Rebuilt from the Japan Influenza Surveillance Explorer v22, so the
 #       Prefecture Map opens on a region map with a bubble on each selected prefecture,
 #       the maps stay put when the page scrolls, and the chart, table and map follow v22.
@@ -136,7 +138,7 @@ import plotly.io as pio
 from plotly.subplots import make_subplots
 import streamlit as st
 
-VERSION = "v3"
+VERSION = "v4"
 
 # Regions used by the Prefecture Map (JIS prefecture codes).
 REGIONS = {"Hokkaido": [1], "Tohoku": list(range(2, 8)), "Kanto": list(range(8, 15)),
@@ -1244,7 +1246,7 @@ with tab_alerts:
 # ---- Summary table tab -------------------------------------------------------------
 with tab_table:
     st.write(f"Weeks {start_wk} to {end_wk} (set with Weeks shown in the sidebar). "
-             "The four cards summarize all 47 prefectures.")
+             "The four cards (influenza only) summarize all 47 prefectures.")
     ds = d[in_window]
     if not rated:
         quick = []
@@ -1261,9 +1263,22 @@ with tab_table:
                           "Largest C2": round(float(sq["c2"].max()), 1) if sq["c2"].notna().any() else None,
                           "Alert weeks": int(sq["alert"].sum())})
         st.info("Onset, lead time and false alarms use the influenza 1.0 level, so they are shown for influenza only.")
-        st.dataframe(pd.DataFrame(quick), hide_index=True, width="stretch", height=600,
-                     column_config={f"Reports per sentinel, {map_week}": st.column_config.NumberColumn(format="%.2f"),
-                                    "Peak": st.column_config.NumberColumn(format="%.2f")})
+        qdf = pd.DataFrame(quick)
+        table_scope = st.radio("Table shows", ["Selected prefectures", "All 47 prefectures"],
+                               index=0, horizontal=True, key="table_scope")
+        if table_scope == "Selected prefectures":
+            qshown = qdf[qdf["Prefecture"].isin(chosen)].copy()
+            qshown["_order"] = qshown["Prefecture"].map({p: i for i, p in enumerate(chosen)})
+            qshown = qshown.sort_values("_order").drop(columns="_order")
+            st.caption(f"{len(qshown)} selected in the sidebar; click a column header to sort."
+                       if len(qshown) else "No prefectures selected. Add prefectures in the sidebar, or choose All 47.")
+        else:
+            st.caption("All 47 prefectures; click a column header to sort.")
+            qshown = qdf
+        if len(qshown):
+            st.dataframe(qshown, hide_index=True, width="stretch", height=min(600, 36 * (len(qshown) + 1) + 4),
+                         column_config={f"Reports per sentinel, {map_week}": st.column_config.NumberColumn(format="%.2f"),
+                                        "Peak": st.column_config.NumberColumn(format="%.2f")})
     else:
         rows = []
         for (code, p), s in ds.groupby(["pref_code", "prefecture"]):
