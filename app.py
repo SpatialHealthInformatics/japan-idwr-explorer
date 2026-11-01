@@ -2,10 +2,12 @@
 # Japan IDWR Surveillance Explorer (Streamlit web app)
 # Author:   Genie Tang (gtang10@jh.edu)
 # Script:   app.py
-# Version:  v7
+# Version:  v8
 #
 # Version log
-#   v7 (2026-11-01): Sidebar is open when the app first loads and stays open (collapse button hidden).
+#   v8 (2026-11-01): Phone: the sidebar can be closed (button kept below 768 px wide). Japanese ranges
+#       use から in place of the wave dash; the C2 baseline reads as weeks before the tested week.
+#   v7 (2026-11-01): Sidebar is open when the app first loads and stays open on computers and tablets (collapse button hidden); on phones the button stays so it can be closed.
 #   v6 (2026-10-31): English / 日本語 switch at the top of the sidebar (i18n.py). English is the default;
 #       add ?lang=ja to the address to open the Japanese version.
 #   v5 (2026-10-31): About text: "Source:" with a colon, and the notice says "TriNetX data" without
@@ -145,7 +147,7 @@ import streamlit as st
 
 import i18n
 
-VERSION = "v7"
+VERSION = "v8"
 
 # Regions used by the Prefecture Map (JIS prefecture codes).
 REGIONS = {"Hokkaido": [1], "Tohoku": list(range(2, 8)), "Kanto": list(range(8, 15)),
@@ -739,9 +741,12 @@ st.set_page_config(page_title="Japan IDWR Surveillance Explorer", page_icon="�
 st.markdown(
     """
     <style>
-    /* Sidebar stays open: hide the collapse button */
-    [data-testid="stSidebarCollapseButton"], [data-testid="stSidebarCollapsedControl"],
-    [data-testid="collapsedControl"] { display: none !important; }
+    /* Sidebar stays open on computers and tablets (collapse button hidden).
+       On phones the button stays, so the sidebar can be closed to see the page. */
+    @media (min-width: 768px) {
+        [data-testid="stSidebarCollapseButton"], [data-testid="stSidebarCollapsedControl"],
+        [data-testid="collapsedControl"] { display: none !important; }
+    }
     /* Century Gothic where it is installed; Didact Gothic, a free look-alike,
        for everyone else. The same pair the portfolio site uses. */
     @import url('https://fonts.googleapis.com/css2?family=Didact+Gothic&display=swap');
