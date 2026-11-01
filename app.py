@@ -2,9 +2,10 @@
 # Japan IDWR Surveillance Explorer (Streamlit web app)
 # Author:   Genie Tang (gtang10@jh.edu)
 # Script:   app.py
-# Version:  v8
+# Version:  v9
 #
 # Version log
+#   v9 (2026-11-01): Data notice reworded: the TriNetX data is not public, so it is not included.
 #   v8 (2026-11-01): Phone: the sidebar can be closed (button kept below 768 px wide). Japanese ranges
 #       use から in place of the wave dash; the C2 baseline reads as weeks before the tested week.
 #   v7 (2026-11-01): Sidebar is open when the app first loads and stays open on computers and tablets (collapse button hidden); on phones the button stays so it can be closed.
@@ -147,7 +148,7 @@ import streamlit as st
 
 import i18n
 
-VERSION = "v8"
+VERSION = "v9"
 
 # Regions used by the Prefecture Map (JIS prefecture codes).
 REGIONS = {"Hokkaido": [1], "Tohoku": list(range(2, 8)), "Kanto": list(range(8, 15)),
@@ -195,7 +196,7 @@ ALERT_RED = "#b03030"
 # version that adds a newly shareable source, so the app never states something
 # that is no longer true.
 NOTICE_FULL = ("This app uses public IDWR data only. The TriNetX data used in the JSPID "
-               "comparison is not included, because it is not public data. If it becomes available for "
+               "comparison is not public, so it is not included. If it becomes available for "
                "sharing, it will be added here.")
 NOTICE_LINE = "Public IDWR data only. The TriNetX comparison is not included."
 NOTICE_COLORS = {"light": ("#efe9fb", "#d3c8f2", "#2e2557"), "dark": ("#2a2547", "#4a4177", "#e6e0fa")}
