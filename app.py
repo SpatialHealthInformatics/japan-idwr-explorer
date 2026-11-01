@@ -2,9 +2,10 @@
 # Japan IDWR Surveillance Explorer (Streamlit web app)
 # Author:   Genie Tang (gtang10@jh.edu)
 # Script:   app.py
-# Version:  v10
+# Version:  v11
 #
 # Version log
+#   v11 (2026-11-01): The sidebar opens on every page load, also for a visitor whose browser remembers it closed. The open and close arrows are lime green.
 #   v10 (2026-11-01): README rewritten for visitors (live link, languages, data notice, sources). App behavior unchanged.
 #   v9 (2026-11-01): Data notice reworded: the TriNetX data is not public, so it is not included.
 #   v8 (2026-11-01): Phone: the sidebar can be closed (button kept below 768 px wide). Japanese ranges
@@ -149,7 +150,7 @@ import streamlit as st
 
 import i18n
 
-VERSION = "v10"
+VERSION = "v11"
 
 # Regions used by the Prefecture Map (JIS prefecture codes).
 REGIONS = {"Hokkaido": [1], "Tohoku": list(range(2, 8)), "Kanto": list(range(8, 15)),
@@ -740,9 +741,38 @@ i18n.init_language()
 i18n.install()
 st.set_page_config(page_title="Japan IDWR Surveillance Explorer", page_icon="📈", layout="wide", initial_sidebar_state="expanded")
 
+# Open the sidebar once per page load. Streamlit remembers a closed sidebar in the browser and then
+# ignores initial_sidebar_state, so a visitor who closed it once would land on the main page.
+import streamlit.components.v1 as components
+components.html("""<script>
+(function () {
+  try {
+    var p = window.parent, d = p.document;
+    if (p.__sidebarOpenedOnce) return;
+    var tries = 0;
+    var t = setInterval(function () {
+      tries++;
+      var btn = d.querySelector('[data-testid="stExpandSidebarButton"]');
+      var sb = d.querySelector('[data-testid="stSidebar"]');
+      if (btn) { btn.click(); p.__sidebarOpenedOnce = true; clearInterval(t); }
+      else if (sb && tries > 6) { p.__sidebarOpenedOnce = true; clearInterval(t); }
+      if (tries > 60) clearInterval(t);
+    }, 250);
+  } catch (e) {}
+})();
+</script>""", height=0)
+
 st.markdown(
     """
     <style>
+    /* Sidebar open and close arrows: bright pastel lime so they are easy to find */
+    [data-testid="stExpandSidebarButton"], [data-testid="stSidebarCollapseButton"] button,
+    [data-testid="stSidebarCollapseButton"] > button {
+        background: #c9f7a5 !important; border: 2px solid #7fd44c !important; border-radius: 10px !important;
+        color: #1f3d0c !important; box-shadow: 0 1px 6px rgba(80, 160, 40, 0.35) !important;
+        min-width: 2.4rem; min-height: 2.4rem;
+    }
+    [data-testid="stExpandSidebarButton"] svg, [data-testid="stSidebarCollapseButton"] svg { color: #1f3d0c !important; fill: #1f3d0c !important; }
     /* Sidebar stays open on computers and tablets (collapse button hidden).
        On phones the button stays, so the sidebar can be closed to see the page. */
     @media (min-width: 768px) {
