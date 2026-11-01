@@ -2,9 +2,10 @@
 # Japan IDWR Surveillance Explorer (Streamlit web app)
 # Author:   Genie Tang (gtang10@jh.edu)
 # Script:   app.py
-# Version:  v9
+# Version:  v10
 #
 # Version log
+#   v10 (2026-11-01): README rewritten for visitors (live link, languages, data notice, sources). App behavior unchanged.
 #   v9 (2026-11-01): Data notice reworded: the TriNetX data is not public, so it is not included.
 #   v8 (2026-11-01): Phone: the sidebar can be closed (button kept below 768 px wide). Japanese ranges
 #       use から in place of the wave dash; the C2 baseline reads as weeks before the tested week.
@@ -148,7 +149,7 @@ import streamlit as st
 
 import i18n
 
-VERSION = "v9"
+VERSION = "v10"
 
 # Regions used by the Prefecture Map (JIS prefecture codes).
 REGIONS = {"Hokkaido": [1], "Tohoku": list(range(2, 8)), "Kanto": list(range(8, 15)),
