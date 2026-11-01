@@ -2,9 +2,13 @@
 # Japan IDWR Surveillance Explorer (Streamlit web app)
 # Author:   Genie Tang (gtang10@jh.edu)
 # Script:   app.py
-# Version:  v4
+# Version:  v6
 #
 # Version log
+#   v6 (2026-10-31): English / 日本語 switch at the top of the sidebar (i18n.py). English is the default;
+#       add ?lang=ja to the address to open the Japanese version.
+#   v5 (2026-10-31): About text: "Source:" with a colon, and the notice says "TriNetX data" without
+#       naming the pediatric influenza set, since this app covers all 19 diseases.
 #   v4 (2026-10-30): Summary Table for diseases without the influenza 1.0 level (for example COVID-19)
 #       now shows the prefectures selected in the sidebar, with the same Selected / All 47 choice.
 #   v3 (2026-10-29): Rebuilt from the Japan Influenza Surveillance Explorer v22, so the
@@ -138,7 +142,9 @@ import plotly.io as pio
 from plotly.subplots import make_subplots
 import streamlit as st
 
-VERSION = "v4"
+import i18n
+
+VERSION = "v6"
 
 # Regions used by the Prefecture Map (JIS prefecture codes).
 REGIONS = {"Hokkaido": [1], "Tohoku": list(range(2, 8)), "Kanto": list(range(8, 15)),
@@ -170,7 +176,7 @@ IDWR_URL = "https://id-info.jihs.go.jp/surveillance/idwr/"
 SAMPLE_PATH = ROOT / "sample" / "idwr_weekly_sample.csv"
 ALLOW_SAMPLE = os.environ.get("JIE_SAMPLE") == "1"
 
-FONT_STACK = "Century Gothic, CenturyGothic, Didact Gothic, sans-serif"
+FONT_STACK = "Century Gothic, CenturyGothic, Didact Gothic, \"Hiragino Sans\", \"Hiragino Kaku Gothic ProN\", \"Yu Gothic\", Meiryo, \"Noto Sans JP\", sans-serif"
 pio.templates["appfont"] = go.layout.Template(layout=dict(font=dict(family=FONT_STACK)))
 pio.templates.default = "plotly_white+appfont"
 
@@ -185,7 +191,7 @@ ALERT_RED = "#b03030"
 # Data notice (handoff section 9). Wording is fixed; change it only in the same
 # version that adds a newly shareable source, so the app never states something
 # that is no longer true.
-NOTICE_FULL = ("This app uses public IDWR data only. The TriNetX pediatric influenza data used in the JSPID "
+NOTICE_FULL = ("This app uses public IDWR data only. The TriNetX data used in the JSPID "
                "comparison is not included, because it is not public data. If it becomes available for "
                "sharing, it will be added here.")
 NOTICE_LINE = "Public IDWR data only. The TriNetX comparison is not included."
@@ -725,6 +731,8 @@ def ranked_table(m, codes_in_view, title):
 
 
 # ---- Page layout -------------------------------------------------------------
+i18n.init_language()
+i18n.install()
 st.set_page_config(page_title="Japan IDWR Surveillance Explorer", page_icon="📈", layout="wide")
 
 st.markdown(
@@ -734,7 +742,7 @@ st.markdown(
        for everyone else. The same pair the portfolio site uses. */
     @import url('https://fonts.googleapis.com/css2?family=Didact+Gothic&display=swap');
     html, body, [class*="st-"], .stApp, button, input, select, textarea {
-        font-family: "Century Gothic", CenturyGothic, "Didact Gothic", sans-serif;
+        font-family: "Century Gothic", CenturyGothic, "Didact Gothic", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, "Noto Sans JP", sans-serif;
     }
     /* Streamlit draws its icons with a ligature font. The rule above would turn
        them into their literal names, such as keyboard_double_arrow_left, so the
@@ -814,6 +822,7 @@ def add_prefecture():
 
 diseases = sorted(weekly["disease"].unique())
 with st.sidebar:
+    i18n.language_switch()
     st.header("Prefectures")
     all_prefs = list(weekly.drop_duplicates("pref_code").sort_values("pref_code")["prefecture"])
     st.selectbox("Add a prefecture", [p for p in all_prefs if p not in st.session_state.prefs],
@@ -1245,8 +1254,8 @@ with tab_alerts:
 
 # ---- Summary table tab -------------------------------------------------------------
 with tab_table:
-    st.write(f"Weeks {start_wk} to {end_wk} (set with Weeks shown in the sidebar). "
-             "The four cards (influenza only) summarize all 47 prefectures.")
+    st.write(f"Weeks {start_wk} to {end_wk} (set with Weeks shown in the sidebar)."
+             + (" The four cards summarize all 47 prefectures." if rated else ""))
     ds = d[in_window]
     if not rated:
         quick = []
@@ -1380,7 +1389,7 @@ with tab_about:
                  + (", New Year weeks left out of baselines" if drop_holidays else ""))
     notice(NOTICE_FULL)
     st.markdown(f"""
-**Source.** Japan Institute for Health Security (JIHS, formerly NIID), Infectious Disease Weekly Report (IDWR),
+**Source:** Japan Institute for Health Security (JIHS, formerly NIID), Infectious Disease Weekly Report (IDWR),
 weekly reports of sentinel-surveillance diseases by prefecture ([link]({IDWR_URL})). The unit is reports per
 sentinel site per week. About 5,000 sentinel clinics and hospitals report influenza nationwide. The number differs
 by prefecture and changes from week to week, so per-sentinel values, not raw counts, are comparable across
