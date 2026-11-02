@@ -27,3 +27,5 @@ The weekly table has one row per prefecture, ISO week and disease, with reports 
 - Prefecture boundaries: dataofjapan/land (GitHub). For display, small outlying islands are dropped and the outlines simplified. Okinawa is drawn in an inset. Spatial weights come from the full-resolution boundaries.
 - Population: 2020 Population Census, e-Stat.
 - EARS C2: Hutwagner et al., 2003.
+
+Copyright 2026 SpatialHealthInformatics
