@@ -2,9 +2,11 @@
 # Japan IDWR Surveillance Explorer (Streamlit web app)
 # Author:   Genie Tang (gtang10@jh.edu)
 # Script:   app.py
-# Version:  v12
+# Version:  v13
 #
 # Version log
+#   v13 (2026-11-05): The 1.0 level (and the 10 and 30 levels) show for influenza only, as in IDWR. For every other
+#       disease the chart note, the map help text and the User guide no longer mention them, and the alert basis is EARS C2 alone.
 #   v12 (2026-11-01): The sidebar opener uses st.iframe, which replaces st.components.v1.html
 #       (deprecated in Streamlit); the old call stays as a fallback. Nothing else changed.
 #   v11 (2026-11-01): The sidebar opens on every page load, also for a visitor whose browser remembers it closed. The open and close arrows are lime green.
@@ -152,7 +154,7 @@ import streamlit as st
 
 import i18n
 
-VERSION = "v12"
+VERSION = "v13"
 
 # Regions used by the Prefecture Map (JIS prefecture codes).
 REGIONS = {"Hokkaido": [1], "Tohoku": list(range(2, 8)), "Kanto": list(range(8, 15)),
@@ -1127,9 +1129,10 @@ with tab_chart:
                     ann.font.size, ann.font.color = 14, INK
         st.markdown(f"**{disease}: reports per sentinel site by week** · {start_wk} to {end_wk}")
         show(fig, width="stretch", config=CHARTCFG)
-        st.caption("Hover for every prefecture's value in a week. Diamonds mark EARS C2 alerts. Dashed line: "
-                   "epidemic threshold (1.0). Dotted lines: caution (10) and warning (30). Drag on the chart "
-                   "to zoom; double-click to reset. Log scale hides weeks with zero reports.")
+        st.caption("Hover for every prefecture's value in a week. Diamonds mark EARS C2 alerts. "
+                   + ("Dashed line: epidemic threshold (1.0). Dotted lines: caution (10) and warning (30). "
+                      if rated else "")
+                   + "Drag on the chart to zoom; double-click to reset. Log scale hides weeks with zero reports.")
         csv = view[["prefecture", "week_label", "week_start", "disease", "per_sentinel", "c2", "alert"]].to_csv(index=False)
         st.download_button("Download the plotted data (CSV)", csv, file_name="japan_idwr_selected.csv",
                            mime="text/csv")
@@ -1140,7 +1143,7 @@ with tab_pmap:
     area = c_area.radio("Area", ["Region of each selected prefecture", "Kanto and Kansai", "Kanto (Tokyo area)",
                                  "Kansai (Osaka area)"], horizontal=True, key="pmap_area")
     pscale = c_scale.radio("Shade prefectures by", ["IDWR levels", "Continuous"] if rated else ["Continuous"], horizontal=True, key=f"pmap_scale_{rated}",
-                           help="Five bands: under 1.0, then 1.0 to 9.99, 10 to 19.99, 20 to 29.99, and 30 and over.")
+                           help=("Five bands: under 1.0, then 1.0 to 9.99, 10 to 19.99, 20 to 29.99, and 30 and over." if rated else None))
     p_alert = st.toggle("Outline prefectures with a C2 alert this week (black)", value=False, key="pmap_alert_lines")
     if area == "Region of each selected prefecture":
         sel = m_week[m_week["prefecture"].isin(chosen)].set_index("prefecture")
@@ -1211,7 +1214,7 @@ with tab_jmap:
                    "prefecture's chart color. Add prefectures in the sidebar to add bubbles. " + ISLANDS_NOTE)
     else:
         jscale = j2.radio("Shade prefectures by", ["IDWR levels", "Continuous"] if rated else ["Continuous"], horizontal=True, key=f"jmap_scale_{rated}",
-                          help="Five bands: under 1.0, then 1.0 to 9.99, 10 to 19.99, 20 to 29.99, and 30 and over.")
+                          help=("Five bands: under 1.0, then 1.0 to 9.99, 10 to 19.99, 20 to 29.99, and 30 and over." if rated else None))
         j_alert = st.toggle("Outline prefectures with a C2 alert this week (black)", value=False,
                             key="jmap_alert_lines")
         st.markdown(f"**{disease}: reports per sentinel site in every prefecture** · {map_week}")
@@ -1417,15 +1420,16 @@ with tab_help:
 - **Spatial Statistics** tests whether high-reporting prefectures sit next to each other (global Moran's I),
   maps the clusters (LISA), and shows Moran's I for every week, so you can see clusters form through a season.
 - **Chart**: the tiles show each prefecture's latest value in the window, its peak, and the number of alert
-  weeks. The dashed line is the epidemic threshold (1.0); the dotted lines are the caution (10) and warning (30)
-  levels.
+  weeks. For influenza only, the dashed line is the epidemic threshold (1.0) and the dotted lines are the
+  caution (10) and warning (30) levels.
 - **Prefecture Map** shows Kanto and Kansai side by side, one of them, or only your selected prefectures, with
   the rest of Japan faded. **Japan Map** shades all 47 prefectures and ranks them in a table below. Both offer
-  the five IDWR color bands or a continuous scale.
+  a continuous scale. For influenza only, they also offer the five IDWR color bands.
 - **Alerts** runs EARS C2 on each selected prefecture and marks the weeks a surveillance system would have raised
   an alert. Move the threshold slider to see how the count changes.
-- **Summary Table** gives, for the selected prefectures or all 47, each prefecture's peak, its onset week (sustained 1.0), its first C2 alert, the lead
-  between them, and the number of false alarms next to the lead.
+- **Summary Table** gives, for the selected prefectures or all 47, each prefecture's peak and its first C2 alert.
+  For influenza only, it also gives the onset week (sustained 1.0), the lead between onset and alert, and the
+  number of false alarms.
 - **Download the plotted data** saves exactly what is on the chart as a CSV file.
 """)
 

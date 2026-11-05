@@ -7,7 +7,7 @@ An interactive explorer for weekly sentinel surveillance reports by prefecture f
 Pick a disease, up to six prefectures and an IDWR week to see:
 
 - **Spatial Statistics:** global Moran's I, LISA clusters, a Moran scatterplot, and Moran's I by week
-- **Chart:** weekly reports per sentinel site against the epidemic threshold (1.0) and the caution (10) and warning (30) levels, with EARS C2 alerts
+- **Chart:** weekly reports per sentinel site with EARS C2 alerts. For influenza only, the chart also shows the epidemic threshold (1.0) and the caution (10) and warning (30) levels
 - **Prefecture Map:** Kanto and Kansai, or your selected prefectures, with the rest of Japan faded
 - **Japan Map:** all 47 prefectures with a ranked table
 - **Alerts:** C2 by prefecture, alert outcomes, and the New Year check
