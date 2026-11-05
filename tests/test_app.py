@@ -79,3 +79,19 @@ def test_other_diseases():
     assert not at.exception
     disease_box(at).set_value("Influenza").run()
     assert not at.exception
+
+
+def test_threshold_lines_influenza_only():
+    """The 1.0, 10 and 30 levels belong to influenza. Other diseases are judged by EARS C2 alone."""
+    at = _app()
+    sel = [s for s in at.sidebar.selectbox if s.label == "Disease"][0]
+    others = [o for o in sel.options if o != "Influenza"]
+    assert others
+    sel.set_value(others[0]).run()
+    assert not at.exception
+    texts = " ".join(c.value for c in at.caption)
+    assert "epidemic threshold (1.0)" not in texts
+    assert "warning (30)" not in texts
+    [s for s in at.sidebar.selectbox if s.label == "Disease"][0].set_value("Influenza").run()
+    assert not at.exception
+    assert "epidemic threshold (1.0)" in " ".join(c.value for c in at.caption)
