@@ -29,3 +29,7 @@ The weekly table has one row per prefecture, ISO week and disease, with reports 
 - EARS C2: Hutwagner et al., 2003.
 
 Copyright 2026 SpatialHealthInformatics
+
+## Data updates
+
+A GitHub Actions job (.github/workflows/update-data.yml) runs every day. It reads the newest JIHS yearly prefecture file with tools/update_idwr_data.py, checks it, and rewrites data/idwr_weekly.csv only when the data changed. The app reloads the table when that file changes. You can also run the job by hand from the Actions tab.
