@@ -5,6 +5,9 @@
 # Version:  v13
 #
 # Version log
+#   v14 (2026-11-08): The data refresh automatically. tools/update_idwr_data.py reads the newest JIHS yearly
+#       prefecture file, checks it, and rewrites data/idwr_weekly.csv; a GitHub Actions job runs it daily.
+#       The About text says "week 1 to the latest week JIHS has posted" instead of a fixed week.
 #   v13 (2026-11-05): The 1.0 level (and the 10 and 30 levels) show for influenza only, as in IDWR. For every other
 #       disease the chart note, the map help text and the User guide no longer mention them, and the alert basis is EARS C2 alone.
 #   v12 (2026-11-01): The sidebar opener uses st.iframe, which replaces st.components.v1.html
@@ -154,7 +157,7 @@ import streamlit as st
 
 import i18n
 
-VERSION = "v13"
+VERSION = "v14"
 
 # Regions used by the Prefecture Map (JIS prefecture codes).
 REGIONS = {"Hokkaido": [1], "Tohoku": list(range(2, 8)), "Kanto": list(range(8, 15)),
@@ -1461,7 +1464,7 @@ prefectures.
 - This copy uses {c2_source}.
 
 **Diseases and period.** This app covers the 19 sentinel-surveillance diseases in the JIHS provisional yearly
-prefecture file (teiten-tougai), 2026 weeks 1 to 42. Pick the disease in the sidebar. Each disease has a note on
+prefecture file (teiten-tougai), 2026 week 1 to the latest week JIHS has posted (the data refresh automatically). Pick the disease in the sidebar. Each disease has a note on
 its sentinel scheme. Influenza and COVID-19 changed in April 2025, when acute respiratory infection (ARI)
 surveillance began. The other schemes are being checked with JIHS. Public data only.
 

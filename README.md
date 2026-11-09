@@ -2,7 +2,7 @@
 
 **Open the app:** https://japan-idwr-explorer.streamlit.app
 
-An interactive explorer for weekly sentinel surveillance reports by prefecture from Japan's Infectious Disease Weekly Report (IDWR). It covers the 19 sentinel diseases, 2026 weeks 1 to 42. The app is available in English and Japanese (日本語). Use the language switch at the top of the sidebar.
+An interactive explorer for weekly sentinel surveillance reports by prefecture from Japan's Infectious Disease Weekly Report (IDWR). It covers the 19 sentinel diseases, 2026 week 1 to the latest week JIHS has posted. The data refresh automatically (see tools/update_idwr_data.py and .github/workflows/update-data.yml). The app is available in English and Japanese (日本語). Use the language switch at the top of the sidebar.
 
 Pick a disease, up to six prefectures and an IDWR week to see:
 
