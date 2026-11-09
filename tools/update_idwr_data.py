@@ -1,3 +1,4 @@
+# Maintained by SpatialHealthInformatics
 """Update data/idwr_weekly.csv from the JIHS IDWR provisional yearly prefecture file.
 
 Source (public): https://id-info.jihs.go.jp/surveillance/idwr/provisional/<year>/<WW>/<year>-<WW>-teiten-tougai.csv
