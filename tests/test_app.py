@@ -1,3 +1,4 @@
+# Maintained by SpatialHealthInformatics
 """AppTest: drive every control and check nothing raises. Run: python -m pytest tests -q
 AppTest never renders the page, so also look at the app in a browser after any visual change."""
 import os

@@ -1,3 +1,4 @@
+# Maintained by SpatialHealthInformatics
 """Tests for tools/update_idwr_data.py using a small synthetic yearly file (no network).
 Run: python -m pytest tests/test_update_data.py -q"""
 import sys
