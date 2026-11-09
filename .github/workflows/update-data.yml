@@ -27,8 +27,8 @@ jobs:
           if git diff --quiet -- data/idwr_weekly.csv; then
             echo "No change."
           else
-            git config user.name "idwr-data-bot"
-            git config user.email "idwr-data-bot@users.noreply.github.com"
+            git config user.name "PublicHealthInformatics"
+            git config user.email "193877325+PublicHealthInformatics@users.noreply.github.com"
             git add data/idwr_weekly.csv
             git commit -m "Update IDWR data through ${{ steps.upd.outputs.through }}"
             git push
